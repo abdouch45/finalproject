@@ -21,16 +21,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   loginPressed() async {
     if (_email.isNotEmpty && _password.isNotEmpty) {
-      http.Response response = await AuthServices.login(_email, _password);
-      Map responseMap = jsonDecode(response.body);
+      http.Response response = await AuthServices.login(_email, _password).timeout(const Duration(seconds: 5), onTimeout: () {
+
+        print('test');
+        errorSnackBar(context, "please check your network",);
+        return http.Response('ERROR', 408);});
+       Map responseMap = jsonDecode(response.body.toString());
       if (response.statusCode == 200) {
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (BuildContext context) => const HomeScreen(),
             ));
-      } else {
-        errorSnackBar(context, responseMap.values.first);
+      } else  {
+        //if the response is array return first value of array
+        if(responseMap.values.first.length<6)
+        errorSnackBar(context, responseMap.values.first[0]);
+        //else   return first value of the response
+
+        else
+          errorSnackBar(context, responseMap.values.first);
+
       }
     } else {
       errorSnackBar(context, 'enter all required fields');
@@ -62,9 +73,10 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 decoration: const InputDecoration(
                   hintText: 'Enter your email',
-                ),
+                ),keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
                   _email = value;
+
                 },
               ),
               const SizedBox(

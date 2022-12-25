@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 
+
+
 class AuthController extends Controller
 {
     //
@@ -13,8 +15,11 @@ class AuthController extends Controller
 
     public function login(Request $req)
     {
-        // validate inputs
 
+        $this->validate($req,[
+            'email' => 'required|string|max:100',
+            'password' => 'required|string|min:4'
+        ]);
         // find user email in users table
         $user = User::where('email', $req->email)->first();
         // if user email found and password is correct
