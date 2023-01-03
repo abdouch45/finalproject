@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+
+import 'package:dam_p/local_storage.dart';
 import 'package:flutter/material.dart';
 import '/Services/auth_services.dart';
 import '/Services/globals.dart';
 import '/rounded_button.dart';
 import 'package:http/http.dart' as http;
 
-import 'home_screen.dart';
+
+
+import 'teacher_Space/thome_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,23 +30,26 @@ class _LoginScreenState extends State<LoginScreen> {
         print('test');
         errorSnackBar(context, "please check your network",);
         return http.Response('ERROR', 408);});
-       Map responseMap = jsonDecode(response.body.toString());
+      String jsonsDataString = response.body.toString();
+      Map responseMap = jsonDecode(jsonsDataString);
       if (response.statusCode == 200) {
+
+
+        await tokenStorage.setToken(responseMap['token']);
+
+        Navigator.pop(context);
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const HomeScreen(),
+              builder: (BuildContext context) => const teacherHome(),
             ));
       } else  {
-        //if the response is array return first value of array
-        if(responseMap.values.first.length<6)
-        errorSnackBar(context, responseMap.values.first[0]);
-        //else   return first value of the response
 
-        else
-          errorSnackBar(context, responseMap.values.first);
+          errorSnackBar(context,responseMap.values.first);
 
-      }
+
+        }
+
     } else {
       errorSnackBar(context, 'enter all required fields');
     }
@@ -50,6 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    tokenStorage.getToken().then((value) => {
+      print(value)
+
+
+    });
+    //
+
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,

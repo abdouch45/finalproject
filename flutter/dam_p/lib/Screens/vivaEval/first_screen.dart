@@ -20,7 +20,7 @@ class _firtsScreenState extends State<firtsScreen> {
 
       ),
       body: Column(
-      children: [  numberTextField('Organisation du mémoire','[0-0.5]',field1,1)
+      children: [  numberTextField('Organisation du mémoire','[0-0.5]',field1)
       ,]),
       floatingActionButton:  FloatingActionButton(
        onPressed:() {

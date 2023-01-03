@@ -1,16 +1,22 @@
 import 'package:dam_p/Screens/calc_screen.dart';
 import 'package:dam_p/Screens/login_screen.dart';
+import 'package:dam_p/local_storage.dart';
 import 'package:dam_p/Screens/vivaEval/first_screen.dart';
 import 'package:flutter/material.dart';
 
+
 import '../rounded_button.dart';
+import 'teacher_Space/thome_screen.dart';
 import 'vivaforstudent_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+
+
+
+
     return  Scaffold(
  appBar: AppBar(
    backgroundColor: Colors.black,
@@ -25,11 +31,21 @@ class HomeScreen extends StatelessWidget {
             RoundedButton(
               btnText: 'Teacher Space',
               onBtnPressed: () =>{
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-              builder: (BuildContext context) => const LoginScreen(),
-              ))
+
+              tokenStorage.getToken().then((value) => {
+               value!=null? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const teacherHome(),
+                    ))
+                    :Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const LoginScreen(),
+                    ))
+
+              })
+
               } ,
             ),
 

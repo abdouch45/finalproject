@@ -6,8 +6,6 @@ import '/Services/globals.dart';
 import '/rounded_button.dart';
 import 'package:http/http.dart' as http;
 
-import 'home_screen.dart';
-
 class VivaForStudent extends StatefulWidget {
   const VivaForStudent({Key? key}) : super(key: key);
 
@@ -18,20 +16,85 @@ class VivaForStudent extends StatefulWidget {
 class _VivaForStudentState extends State<VivaForStudent> {
 
   String _vivaCode = '';
+  void _showMaterialDialog(data) {
 
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+
+            title: Text('VIVA INFO'),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('project name: ${data["pname"]}'),
+                Text('project yaer: ${data["year"]}'),
+                Text('president name: ${data["prname"]}'),
+                Text('president mark: ${data["prmark"]}'),
+                Text('supervisor name: ${data["sname"]}'),
+                Text('supervisor mark: ${data["smark"]}'),
+                Text('examiner name: ${data["ename"]}'),
+                Text('examiner mark: ${data["emark"]}'),
+                Text('students name: '),
+                Text(' - ${data["s1name"]}'),
+                if(data["s3name"]!=null)Text(' - ${data["s3name"]}') ,
+                if (data["s2name"]!=null) Text(' - ${data["s2name"]}'),
+                Text('final mark: ${data["fmark"]}'),
+
+
+
+
+
+
+
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Close')),
+
+            ],
+          );
+        });
+  }
   showViva() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (_vivaCode.isNotEmpty) {
+      http.Response response = await Viva.getViva(_vivaCode).timeout(const Duration(seconds: 5), onTimeout: () {
 
-    }else print('me');
+        print('test');
+        errorSnackBar(context, "please check your network",);
+        return http.Response('ERROR', 408);});
+      String jsonsDataString = response.body.toString();
+      Map responseMap = jsonDecode(jsonsDataString);
+
+      if (response.statusCode == 200) {
+
+        _showMaterialDialog(responseMap);
+      } else  {
+
+        errorSnackBar(context,responseMap.values.first);
+
+
+      }
+
+    } else {
+      errorSnackBar(context, 'enter viva code');
+    }
   }
 
   @override
-  Widget build(BuildContext context) {showViva();
+  Widget build(BuildContext context) {
 
     return Scaffold(
+
         appBar: AppBar(
           backgroundColor: Colors.black,
-          centerTitle: true,
+          centerTitle: false,
           elevation: 0,
           title: const Text(
             "Graduate's Viva",
@@ -50,7 +113,7 @@ class _VivaForStudentState extends State<VivaForStudent> {
                 height: 30,
               ),
               TextField(
-                obscureText: true,
+                obscureText: false,
                 decoration: const InputDecoration(
                   hintText: 'Enter your Viva code',
                 ),
@@ -63,7 +126,7 @@ class _VivaForStudentState extends State<VivaForStudent> {
               ),
               RoundedButton(
                 btnText: 'Search for your viva',
-                onBtnPressed: () => showViva,
+                onBtnPressed: () => showViva(),
               )
             ],
           ),
