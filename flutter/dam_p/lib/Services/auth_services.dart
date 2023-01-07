@@ -1,7 +1,5 @@
 import 'dart:convert';
-
-import 'package:dam_p/local_storage.dart';
-
+import '../local_storage.dart';
 import '/Services/globals.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,6 +43,24 @@ class AuthServices {
     return response;
   }
 
+
+  static Future<http.Response> register(String name,String email,String password,String password_conf) async {
+    Map data = {
+      "name": name,
+      "email": email,
+      "password": password,
+      "password_confirmation": password_conf,
+    };
+    var body = json.encode(data);
+    var url = Uri.parse(baseURL+'/register');
+    http.Response response = await http.post(
+      url,
+      headers: header1,
+      body: body,
+    );
+    return response;
+  }
+
 }
 class Viva {
 
@@ -52,8 +68,6 @@ class Viva {
   static Future<http.Response> create(Map data) async {
 
     String? token = await tokenStorage.getToken();
-
-
 
     var body = json.encode(data);
     var url = Uri.parse(baseURL+'/newviva');
@@ -68,20 +82,34 @@ class Viva {
     );
     return response;
   }
+
+
   static Future<http.Response> getViva(String code) async {
-    Map data = {
-      "code": code,
+    var url = Uri.parse(baseURL+'/viva/'+'$code');
 
-    };
-    var body = json.encode(data);
-    var url = Uri.parse(baseURL+'/viva');
-
-    http.Response response = await http.post(
+    http.Response response = await http.get(
       url,
       headers: header1,
-      body: body,
     );
-    print("me2");
+    print("viva by code");
+    return response;
+  }
+
+
+  static Future<http.Response> getUserVivas() async {
+
+    String? token = await tokenStorage.getToken();
+
+    var url = Uri.parse(baseURL+'/userviva/');
+
+    http.Response response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'},
+    );
+    print('user vivas');
     return response;
   }
 }

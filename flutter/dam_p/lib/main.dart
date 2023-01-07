@@ -1,28 +1,24 @@
-import 'package:dam_p/providers/calcul_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'Screens/home_screen.dart';
+import '/homeScreen.dart';
+import '/welcomeScreen.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create:  (_)=> Calc()),
-
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primaryColor: Colors.red,
+      ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home:const WelcomeScreen(title: 'home'),
     );
   }
 }
